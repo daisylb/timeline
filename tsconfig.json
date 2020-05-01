@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "lib": ["ESNext", "DOM"],
+        "moduleResolution": "node",
+        "strict": true,
+        "types": ["@types/gapi", "@types/gapi.client.sheets", "@types/gapi.auth2"]
+    },
+}
