@@ -3,8 +3,9 @@ html
     head
         title hi there
     body
+        div#react-root
         button#authorize_button(style='display: none') Sign in
         button#signout_button(style='display: none') Sign out
         pre#content
-        script(src='./timeline.ts')
-        script(async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()" onreadystatechange="if (this.readyState === 'complete') this.onload()")
+        script#gapi-script(async defer src="https://apis.google.com/js/api.js")
+        script(async defer src='./timeline.ts')

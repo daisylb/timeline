@@ -111,3 +111,9 @@ function listMajors() {
     appendPre('Error: ' + response.result.error.message);
   });
 }
+
+import Root from './Root'
+import {render} from 'react-dom'
+import {createElement} from 'react'
+
+render(createElement(Root), document.getElementById('react-root'))
