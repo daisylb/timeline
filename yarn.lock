@@ -870,6 +870,13 @@
   dependencies:
     "@types/gapi" "*"
 
+"@types/gapi.client.drive@^3.0.4":
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/@types/gapi.client.drive/-/gapi.client.drive-3.0.4.tgz#fd4dd9eb3c43ce3c1e8c7b2cb59f9e4541a1a2c9"
+  integrity sha512-8ingfZdF4Cwa7tjxksD2xuk9gse5OpVlvBYO43EQUmcu1XGyMrDRDhNb/Vf+uywhqLoqIFPKl/iAe/SQePY1BA==
+  dependencies:
+    "@types/gapi.client" "*"
+
 "@types/gapi.client.sheets@^4.0.6":
   version "4.0.6"
   resolved "https://registry.yarnpkg.com/@types/gapi.client.sheets/-/gapi.client.sheets-4.0.6.tgz#6773eaec7809963fdeea0178019f1a65f7fe9759"

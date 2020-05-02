@@ -5,14 +5,26 @@ type Props = {}
 export default function GetFromSpreadsheet(props: Props): ReactElement | null {
   const [value, setValue] = useState<any[][]|undefined>(undefined)
   useEffect(() => {
-    ;(async ()=>{
+    const doUpdate = async ()=>{
       const resp = await gapi.client.sheets.spreadsheets.values.get({
-        spreadsheetId: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms',
-        range: 'Class Data!A2:E',
+        spreadsheetId: '1sRTwyg_AfxmqtdP17Z0ynfeg7fHaKMnGCFAUC00iiXk',
+        range: 'Sheet1!A2:D',
+        valueRenderOption: "UNFORMATTED_VALUE",
+        dateTimeRenderOption: "SERIAL_NUMBER"
       })
-      console.log(resp)
       setValue(resp.result.values)
-    })()
+    }
+    var latest = ''
+    const handle = setInterval(async () => {
+      const resp2 = await gapi.client.drive.files.get({fileId: '1sRTwyg_AfxmqtdP17Z0ynfeg7fHaKMnGCFAUC00iiXk', fields: 'version'})
+      const rev = resp2.result.version
+      if (rev && rev != latest){
+        latest = rev
+        doUpdate()
+      }
+    }, 3000)
+    doUpdate()
+    return () => clearInterval(handle)
   }, [])
   if (value === undefined) return <div>Loading...</div>
   return <div>{JSON.stringify(value)}</div>

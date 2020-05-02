@@ -9,11 +9,11 @@ var CLIENT_ID = '772721993565-c1es60fgnbb0p862cnmio0vfeguecuia.apps.googleuserco
 var API_KEY = 'AIzaSyBOoB0xo26xp47UieZWZyoju_h5JwUEUhA';
 
 // Array of API discovery doc URLs for APIs used by the quickstart
-var DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4"];
+var DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4", "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"];
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
-var SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly";
+var SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/drive.metadata.readonly";
 
 const INIT_ARGS = {
   apiKey: API_KEY,
