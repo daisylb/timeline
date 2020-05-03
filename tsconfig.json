@@ -1,10 +1,10 @@
 {
-    "compilerOptions": {
-        "target": "ESNext",
-        "lib": ["ESNext", "DOM"],
-        "moduleResolution": "node",
-        "strict": true,
-        "allowSyntheticDefaultImports": true,
-        "jsx": "react"
-    },
+  "compilerOptions": {
+    "target": "ES2019",
+    "lib": ["ESNext", "DOM"],
+    "moduleResolution": "node",
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react"
+  }
 }

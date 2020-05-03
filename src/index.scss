@@ -1,54 +1,54 @@
 $colors: (
-    "main": #c92a2a,
-    "comms": #0b7285,
-    "program": #e67700,
-    "ticketing": #5c940d,
-    "av": #d6336c,
-    "experience": #5f3dc4,
+  "main": #c92a2a,
+  "comms": #0b7285,
+  "program": #e67700,
+  "ticketing": #5c940d,
+  "av": #d6336c,
+  "experience": #5f3dc4,
 );
 
 body {
-    font-family: Inter;
+  font-family: Inter;
 }
 
 .timeline {
-    --tl-100pc: calc(100% / (var(--tl-end) - var(--tl-start)));
-    .timeline-row {
-        position: relative;
-        height: 55px;
-        margin: 10px 0;
-    }
+  --tl-100pc: calc(100% / (var(--tl-end) - var(--tl-start)));
+  .timeline-row {
+    position: relative;
+    height: 55px;
+    margin: 10px 0;
+  }
 }
 .timeline-inner {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: calc((var(--evt-start) - var(--tl-start)) * var(--tl-100pc));
-    right: calc((var(--tl-end) - var(--evt-end)) * var(--tl-100pc));
-    color: white;
-    border-radius: 5px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc((var(--evt-start) - var(--tl-start)) * var(--tl-100pc));
+  right: calc((var(--tl-end) - var(--evt-end)) * var(--tl-100pc));
+  color: white;
+  border-radius: 5px;
 
-    background-color: #333;
-    @each $name, $color in $colors {
-        .kind-#{$name} & {
-            background-color: $color;
-        }
+  background-color: #333;
+  @each $name, $color in $colors {
+    .kind-#{$name} & {
+      background-color: $color;
     }
+  }
 }
 .timeline-label {
-    position: absolute;
-    top: 8px;
-    bottom: 8px;
-    left: 8px;
-    width: max-content;
-    &.position-left {
-        left: auto;
-        right: calc(100% + 8px);
-        color: #333;
-        text-align: right;
-    }
-    &.position-right {
-        left: calc(100% + 8px);
-        color: #333;
-    }
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 8px;
+  width: max-content;
+  &.position-left {
+    left: auto;
+    right: calc(100% + 8px);
+    color: #333;
+    text-align: right;
+  }
+  &.position-right {
+    left: calc(100% + 8px);
+    color: #333;
+  }
 }
