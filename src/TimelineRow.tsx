@@ -10,7 +10,7 @@ declare module 'csstype' {
 
 type Props = {
   startSerial: number,
-  endSerial: number,
+  endSerial: number|null,
   label: string,
   kind: string,
 }
@@ -60,15 +60,15 @@ export default function TimelineRow(props: Props): ReactElement | null {
   const labelRef = useCallback(ro.labelCb, [])
   const barRef = useCallback(ro.barCb, [])
   return <div
-    className={`timeline-row kind-${props.kind}`}
+    className={`timeline-row kind-${props.kind} ${props.endSerial ? '' : 'point'}`}
     style={{
       "--evt-start": serialToUnix(props.startSerial),
-      "--evt-end": serialToUnix(props.endSerial),
+      "--evt-end": props.endSerial ? serialToUnix(props.endSerial) : serialToUnix(props.startSerial) + 86400,
     }}>
       <div className="timeline-inner" ref={barRef}>
         <div className={`timeline-label ${position ? `position-${position}`:''}`} ref={labelRef}>
           <b>{props.label}</b><br />
-          <small>{FMT.format(serialToDate(props.startSerial))}&thinsp;&ndash;&thinsp;{FMT.format(serialToDate(props.endSerial))}</small>
+          <small>{FMT.format(serialToDate(props.startSerial))}{props.endSerial?<>&thinsp;&ndash;&thinsp;{FMT.format(serialToDate(props.endSerial))}</>:null}</small>
         </div>
       </div>
   </div>

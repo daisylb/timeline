@@ -9,10 +9,13 @@ declare module 'csstype' {
   }
 }
 
-function parse(data: any[][]): [number, number, string, string][]{
-  const out: [number, number, string, string][] = []
+type Row = [number, number|'', string, string]
+
+function parse(data: any[][]): Row[]{
+  const out: Row[] = []
   for (const datum of data){
-    if (datum.length === 4 && typeof datum[0] === 'number' && typeof datum[1] === 'number' && typeof datum[2] === 'string' && typeof datum[3] === 'string') out.push(datum as [number, number, string, string])
+    if (datum.length === 4 && typeof datum[0] === 'number' && (typeof datum[1] === 'number' || datum[1] === '') && typeof datum[2] === 'string' && typeof datum[3] === 'string') out.push(datum as Row)
+    else console.warn('invalid row', datum)
   }
   return out
 }
@@ -50,7 +53,7 @@ export default function GetFromSpreadsheet(props: Props): ReactElement | null {
     {parsed.map((x, i) => <TimelineRow
       key={i}
       startSerial={x[0]}
-      endSerial={x[1]}
+      endSerial={x[1]||null}
       label={x[2]}
       kind={x[3]}
     ></TimelineRow>)}

@@ -1,3 +1,12 @@
+$colors: (
+    "main": #c92a2a,
+    "comms": #0b7285,
+    "program": #e67700,
+    "ticketing": #5c940d,
+    "av": #d6336c,
+    "experience": #5f3dc4,
+);
+
 body {
     font-family: Inter;
 }
@@ -20,14 +29,10 @@ body {
     border-radius: 5px;
 
     background-color: #333;
-    .kind-main & {
-        background-color: #f26867;
-    }
-    .kind-program & {
-        background-color: #b4902e;
-    }
-    .kind-ticketing & {
-        background-color: #34a1b4;
+    @each $name, $color in $colors {
+        .kind-#{$name} & {
+            background-color: $color;
+        }
     }
 }
 .timeline-label {
