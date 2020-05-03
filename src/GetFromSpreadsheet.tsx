@@ -53,6 +53,7 @@ export default function GetFromSpreadsheet(props: Props): ReactElement | null {
   if (value === undefined) return <div>Loading...</div>
   return <>
   <button onClick={() => reloader.current()}>reload</button>
+  <a href="https://docs.google.com/spreadsheets/d/1sRTwyg_AfxmqtdP17Z0ynfeg7fHaKMnGCFAUC00iiXk/edit#gid=0" target='_blank'>edit</a>
   <div className="timeline" style={{"--tl-start": serialToUnix(tlStart), "--tl-end": serialToUnix(tlEnd)}}>
     {parsed.map((x, i) => <TimelineRow
       key={i}
