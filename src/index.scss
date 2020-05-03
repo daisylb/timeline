@@ -1,0 +1,49 @@
+body {
+    font-family: Inter;
+}
+
+.timeline {
+    --tl-100pc: calc(100% / (var(--tl-end) - var(--tl-start)));
+    .timeline-row {
+        position: relative;
+        height: 55px;
+        margin: 10px 0;
+    }
+}
+.timeline-inner {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc((var(--evt-start) - var(--tl-start)) * var(--tl-100pc));
+    right: calc((var(--tl-end) - var(--evt-end)) * var(--tl-100pc));
+    color: white;
+    border-radius: 5px;
+
+    background-color: #333;
+    .kind-main & {
+        background-color: #f26867;
+    }
+    .kind-program & {
+        background-color: #b4902e;
+    }
+    .kind-ticketing & {
+        background-color: #34a1b4;
+    }
+}
+.timeline-label {
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    left: 8px;
+    width: max-content;
+    &.position-left {
+        left: auto;
+        right: calc(100% + 8px);
+        color: #333;
+        text-align: right;
+    }
+    &.position-right {
+        left: calc(100% + 8px);
+        color: #333;
+    }
+}

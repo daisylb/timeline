@@ -1,4 +1,13 @@
-import React, { ReactElement, useEffect, useState } from "react"
+import React, { ReactElement, useEffect, useState, useMemo } from "react"
+import { serialToDate, serialToUnix } from "./lib"
+import TimelineRow from "./TimelineRow"
+
+declare module 'csstype' {
+  interface Properties {
+    '--tl-start'?: number; 
+    '--tl-end'?: number;
+  }
+}
 
 type Props = {}
 
@@ -8,7 +17,7 @@ export default function GetFromSpreadsheet(props: Props): ReactElement | null {
     const doUpdate = async ()=>{
       const resp = await gapi.client.sheets.spreadsheets.values.get({
         spreadsheetId: '1sRTwyg_AfxmqtdP17Z0ynfeg7fHaKMnGCFAUC00iiXk',
-        range: 'Sheet1!A2:D',
+        range: 'Sheet1!A2:E',
         valueRenderOption: "UNFORMATTED_VALUE",
         dateTimeRenderOption: "SERIAL_NUMBER"
       })
@@ -22,10 +31,19 @@ export default function GetFromSpreadsheet(props: Props): ReactElement | null {
         latest = rev
         doUpdate()
       }
-    }, 3000)
+    }, 10_000)
     doUpdate()
     return () => clearInterval(handle)
   }, [])
+  const [tlStart, tlEnd] = useMemo(() => value?.reduce((prev, curr) => [Math.min(prev[0], curr[0]), Math.max(prev[1], curr[1])] as [number, number]) ?? [0, 0], [value])
   if (value === undefined) return <div>Loading...</div>
-  return <div>{JSON.stringify(value)}</div>
+  return <div className="timeline" style={{"--tl-start": serialToUnix(tlStart), "--tl-end": serialToUnix(tlEnd)}}>
+    {value.map((x, i) => <TimelineRow
+      key={i}
+      startSerial={x[0]}
+      endSerial={x[1]}
+      label={x[2]}
+      kind={x[3]}
+    ></TimelineRow>)}
+    </div>
 }
