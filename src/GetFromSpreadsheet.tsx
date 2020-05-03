@@ -9,6 +9,14 @@ declare module 'csstype' {
   }
 }
 
+function parse(data: any[][]): [number, number, string, string][]{
+  const out: [number, number, string, string][] = []
+  for (const datum of data){
+    if (datum.length === 4 && typeof datum[0] === 'number' && typeof datum[1] === 'number' && typeof datum[2] === 'string' && typeof datum[3] === 'string') out.push(datum as [number, number, string, string])
+  }
+  return out
+}
+
 type Props = {}
 
 export default function GetFromSpreadsheet(props: Props): ReactElement | null {
@@ -35,10 +43,11 @@ export default function GetFromSpreadsheet(props: Props): ReactElement | null {
     doUpdate()
     return () => clearInterval(handle)
   }, [])
+  const parsed = useMemo(() => value ? parse(value):[], [value])
   const [tlStart, tlEnd] = useMemo(() => value?.reduce((prev, curr) => [Math.min(prev[0], curr[0]), Math.max(prev[1], curr[1])] as [number, number]) ?? [0, 0], [value])
   if (value === undefined) return <div>Loading...</div>
   return <div className="timeline" style={{"--tl-start": serialToUnix(tlStart), "--tl-end": serialToUnix(tlEnd)}}>
-    {value.map((x, i) => <TimelineRow
+    {parsed.map((x, i) => <TimelineRow
       key={i}
       startSerial={x[0]}
       endSerial={x[1]}
