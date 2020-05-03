@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState, useMemo } from "react"
+import React, { ReactElement, useEffect, useState, useMemo, useRef } from "react"
 import { serialToDate, serialToUnix } from "./lib"
 import TimelineRow from "./TimelineRow"
 
@@ -24,6 +24,7 @@ type Props = {}
 
 export default function GetFromSpreadsheet(props: Props): ReactElement | null {
   const [value, setValue] = useState<any[][]|undefined>(undefined)
+  const reloader = useRef(() => {})
   useEffect(() => {
     const doUpdate = async ()=>{
       const resp = await gapi.client.sheets.spreadsheets.values.get({
@@ -44,12 +45,15 @@ export default function GetFromSpreadsheet(props: Props): ReactElement | null {
       }
     }, 10_000)
     doUpdate()
+    reloader.current = doUpdate
     return () => clearInterval(handle)
   }, [])
   const parsed = useMemo(() => value ? parse(value):[], [value])
-  const [tlStart, tlEnd] = useMemo(() => value?.reduce((prev, curr) => [Math.min(prev[0], curr[0]), Math.max(prev[1], curr[1])] as [number, number]) ?? [0, 0], [value])
+  const [tlStart, tlEnd] = useMemo(() => parsed && parsed.length && parsed.map(x => [x[0], x[1] || 0]).filter(x => isFinite(x[0]) && isFinite(x[1])).reduce((prev, curr) => [Math.min(prev[0], curr[0]), Math.max(prev[1], curr[1])] as [number, number]) || [0, 0], [value])
   if (value === undefined) return <div>Loading...</div>
-  return <div className="timeline" style={{"--tl-start": serialToUnix(tlStart), "--tl-end": serialToUnix(tlEnd)}}>
+  return <>
+  <button onClick={() => reloader.current()}>reload</button>
+  <div className="timeline" style={{"--tl-start": serialToUnix(tlStart), "--tl-end": serialToUnix(tlEnd)}}>
     {parsed.map((x, i) => <TimelineRow
       key={i}
       startSerial={x[0]}
@@ -57,5 +61,5 @@ export default function GetFromSpreadsheet(props: Props): ReactElement | null {
       label={x[2]}
       kind={x[3]}
     ></TimelineRow>)}
-    </div>
+    </div></>
 }
