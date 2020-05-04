@@ -27,7 +27,11 @@ export default function SigninWrapper(props: Props): ReactElement | null {
   return (
     <div>
       not signed in
-      <button onClick={() => gapi.auth2.getAuthInstance().signIn()}>
+      <button
+        onClick={() =>
+          gapi.auth2.getAuthInstance().signIn({ ux_mode: "redirect" })
+        }
+      >
         sign in
       </button>
     </div>
