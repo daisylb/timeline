@@ -1,39 +1,48 @@
-import React, { ReactElement, useState, useEffect, ReactNode } from "react"
+import React, {
+  ReactElement,
+  useState,
+  useEffect,
+  ReactNode,
+  createContext,
+} from "react"
+import OAuth2 from "client-oauth2"
 
-function useSignedIn() {
-  const [s, setS] = useState(() =>
-    gapi.auth2.getAuthInstance().isSignedIn.get(),
-  )
+const TOKEN_STORE_KEY = "auth-token"
+
+function useAuth() {
+  const [token, setToken] = useState<OAuth2.Token | undefined>(undefined)
   useEffect(() => {
-    // TODO: can we unsubscribe on unmount?
-    gapi.auth2.getAuthInstance().isSignedIn.listen(setS)
+    const auth = new OAuth2({
+      clientId:
+        "772721993565-c1es60fgnbb0p862cnmio0vfeguecuia.apps.googleusercontent.com",
+      authorizationUri: "https://accounts.google.com/o/oauth2/v2/auth",
+      redirectUri: `${window.location.protocol}//${window.location.host}/`,
+      scopes: [
+        "https://www.googleapis.com/auth/spreadsheets.readonly",
+        "https://www.googleapis.com/auth/drive.metadata.readonly",
+      ],
+    })
+
+    if (window.location.hash) {
+      auth.token.getToken(window.location).then((t) => {
+        setToken(t)
+      })
+      window.location.hash = ""
+      return
+    }
+    window.location.href = auth.token.getUri()
   }, [])
-  return s
+  return token
 }
 
 type Props = { children: ReactNode }
 
+export const authCtx = createContext<OAuth2.Token | undefined>(undefined)
+
 export default function SigninWrapper(props: Props): ReactElement | null {
-  const signedIn = useSignedIn()
-  if (signedIn)
-    return (
-      <>
-        <button onClick={() => gapi.auth2.getAuthInstance().signOut()}>
-          sign out
-        </button>
-        {props.children}
-      </>
-    )
-  return (
-    <div>
-      not signed in
-      <button
-        onClick={() =>
-          gapi.auth2.getAuthInstance().signIn({ ux_mode: "redirect" })
-        }
-      >
-        sign in
-      </button>
-    </div>
-  )
+  const token = useAuth()
+  console.log(token)
+  if (token)
+    return <authCtx.Provider value={token}>{props.children}</authCtx.Provider>
+  return <div>waiting to get token</div>
 }

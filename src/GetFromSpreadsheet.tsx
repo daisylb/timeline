@@ -4,9 +4,11 @@ import React, {
   useState,
   useMemo,
   useRef,
+  useContext,
 } from "react"
 import { serialToDate, serialToUnix } from "./lib"
 import TimelineRow from "./TimelineRow"
+import { authCtx } from "./SigninWrapper"
 
 declare module "csstype" {
   interface Properties {
@@ -34,27 +36,31 @@ function parse(data: any[][]): Row[] {
 }
 
 type Props = {}
+const spreadsheetId = "1sRTwyg_AfxmqtdP17Z0ynfeg7fHaKMnGCFAUC00iiXk"
 
 export default function GetFromSpreadsheet(props: Props): ReactElement | null {
   const [value, setValue] = useState<any[][] | undefined>(undefined)
   const reloader = useRef(() => {})
+  const token = useContext(authCtx)
   useEffect(() => {
+    if (!token) return
     const doUpdate = async () => {
-      const resp = await gapi.client.sheets.spreadsheets.values.get({
-        spreadsheetId: "1sRTwyg_AfxmqtdP17Z0ynfeg7fHaKMnGCFAUC00iiXk",
-        range: "Sheet1!A2:E",
-        valueRenderOption: "UNFORMATTED_VALUE",
-        dateTimeRenderOption: "SERIAL_NUMBER",
-      })
-      setValue(resp.result.values)
+      const range = "Sheet1!A2:E"
+      const resp = await fetch(
+        `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?valueRenderOption=UNFORMATTED_VALUE&dateTimeRenderOption=SERIAL_NUMBER`,
+        { headers: { Authorization: `Bearer ${token.accessToken}` } },
+      )
+      const json = await resp.json()
+      setValue(json.values)
     }
     var latest = ""
     const handle = setInterval(async () => {
-      const resp2 = await gapi.client.drive.files.get({
-        fileId: "1sRTwyg_AfxmqtdP17Z0ynfeg7fHaKMnGCFAUC00iiXk",
-        fields: "version",
-      })
-      const rev = resp2.result.version
+      const resp = await fetch(
+        `https://www.googleapis.com/drive/v2/files/${spreadsheetId}?fields=version`,
+        { headers: { Authorization: `Bearer ${token.accessToken}` } },
+      )
+      const json = await resp.json()
+      const rev = json.version
       if (rev && rev != latest) {
         latest = rev
         doUpdate()
@@ -63,7 +69,7 @@ export default function GetFromSpreadsheet(props: Props): ReactElement | null {
     doUpdate()
     reloader.current = doUpdate
     return () => clearInterval(handle)
-  }, [])
+  }, [token])
   const parsed = useMemo(() => (value ? parse(value) : []), [value])
   const [tlStart, tlEnd] = useMemo(
     () =>
