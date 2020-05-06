@@ -1,7 +1,6 @@
 import React, { ReactElement, useState, useEffect } from "react"
 import SigninWrapper from "./SigninWrapper"
 import GetFromSpreadsheet from "./GetFromSpreadsheet"
-import OAuth2 from "client-oauth2"
 
 type Argument1<T extends Function> = T extends (a: infer U, ...b: any[]) => any
   ? U

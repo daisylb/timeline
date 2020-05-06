@@ -8,7 +8,8 @@ import React, {
 } from "react"
 import { serialToDate, serialToUnix } from "./lib"
 import TimelineRow from "./TimelineRow"
-import { authCtx } from "./SigninWrapper"
+import { authCtx, TOKEN_STORE_KEY } from "./SigninWrapper"
+import loadScript from "./loadScript"
 
 declare module "csstype" {
   interface Properties {
@@ -35,11 +36,35 @@ function parse(data: any[][]): Row[] {
   return out
 }
 
+function loadSheet() {
+  return new Promise((res) => {
+    loadScript("https://apis.google.com/js/api.js").then(() =>
+      gapi.load("picker", () => {
+        const picker = new google.picker.PickerBuilder()
+          .addView(google.picker.ViewId.SPREADSHEETS)
+          .setAppId("772721993565")
+          .setOAuthToken(localStorage.getItem(TOKEN_STORE_KEY)!)
+          .setDeveloperKey("AIzaSyBOoB0xo26xp47UieZWZyoju_h5JwUEUhA")
+          .setCallback((evt: any) => {
+            if (
+              evt.action === google.picker.Action.PICKED ||
+              evt.action === google.picker.Action.CANCEL
+            )
+              res(evt)
+          })
+          .build()
+        picker.setVisible(true)
+      }),
+    )
+  })
+}
+
 type Props = {}
 const spreadsheetId = "1sRTwyg_AfxmqtdP17Z0ynfeg7fHaKMnGCFAUC00iiXk"
 
 export default function GetFromSpreadsheet(props: Props): ReactElement | null {
   const [value, setValue] = useState<any[][] | undefined>(undefined)
+  const [needsAuth, setNeedsAuth] = useState(false)
   const reloader = useRef(() => {})
   const token = useContext(authCtx)
   useEffect(() => {
@@ -48,17 +73,23 @@ export default function GetFromSpreadsheet(props: Props): ReactElement | null {
       const range = "Sheet1!A2:E"
       const resp = await fetch(
         `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?valueRenderOption=UNFORMATTED_VALUE&dateTimeRenderOption=SERIAL_NUMBER`,
-        { headers: { Authorization: `Bearer ${token.accessToken}` } },
+        { headers: { Authorization: `Bearer ${token}` } },
       )
-      const json = await resp.json()
-      setValue(json.values)
+      if (resp.status == 404) setNeedsAuth(true)
+      else if (resp.status !== 200)
+        console.warn("got unexpected response", resp)
+      else {
+        const json = await resp.json()
+        setValue(json.values)
+      }
     }
     var latest = ""
     const handle = setInterval(async () => {
       const resp = await fetch(
         `https://www.googleapis.com/drive/v2/files/${spreadsheetId}?fields=version`,
-        { headers: { Authorization: `Bearer ${token.accessToken}` } },
+        { headers: { Authorization: `Bearer ${token}` } },
       )
+      if (resp.status !== 200) return
       const json = await resp.json()
       const rev = json.version
       if (rev && rev != latest) {
@@ -87,6 +118,35 @@ export default function GetFromSpreadsheet(props: Props): ReactElement | null {
           )) || [0, 0],
     [value],
   )
+  if (needsAuth)
+    return (
+      <div>
+        <p>
+          The first time you load this page, you need to open the{" "}
+          <b>PyConline Timeline</b> spreadsheet in the Google Drive file picker.
+        </p>
+        <p>
+          This lets this app get access to that one file without requesting
+          access to your entire Drive.
+        </p>
+        <p>
+          You might have to allow third-party cookies or temporarily disable
+          tools like Privacy Badger, but you can turn them back on immediately
+          afterwards, and you'll only have to do this once.
+        </p>
+
+        <button
+          onClick={async () => {
+            const v = await loadSheet()
+            console.log(v)
+            setNeedsAuth(false)
+            reloader.current()
+          }}
+        >
+          open the picker!
+        </button>
+      </div>
+    )
   if (value === undefined) return <div>Loading...</div>
   return (
     <>

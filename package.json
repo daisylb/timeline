@@ -4,6 +4,8 @@
   "main": "index.js",
   "license": "MPL-2.0",
   "devDependencies": {
+    "@types/gapi": "^0.0.39",
+    "@types/google.picker": "^0.0.34",
     "@types/react": "^16.9.34",
     "@types/react-dom": "^16.9.7",
     "pug": "^2.0.4",
@@ -26,6 +28,7 @@
     "trailingComma": "all"
   },
   "scripts": {
-    "build": "parcel build src/index.pug"
+    "build": "parcel build src/index.pug",
+    "start": "parcel src/index.pug"
   }
 }
