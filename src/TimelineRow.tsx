@@ -6,6 +6,7 @@ import React, {
   useCallback,
 } from "react"
 import { serialToUnix, serialToDate } from "./lib"
+import { TimelineEntry } from "./types"
 
 declare module "csstype" {
   interface Properties {
@@ -15,10 +16,7 @@ declare module "csstype" {
 }
 
 type Props = {
-  startSerial: number
-  endSerial: number | null
-  label: string
-  kind: string
+  entry: TimelineEntry
 }
 
 const FMT = new Intl.DateTimeFormat(undefined, {
@@ -71,16 +69,18 @@ export default function TimelineRow(props: Props): ReactElement | null {
   }, [])
   const labelRef = useCallback(ro.labelCb, [])
   const barRef = useCallback(ro.barCb, [])
+  const startSecs = useMemo(() => props.entry.start.getTime(), [
+    props.entry.start,
+  ])
+  const endSecs = useMemo(() => props.entry.end.getTime() + 86_400_000, [
+    props.entry.end,
+  ])
   return (
     <div
-      className={`timeline-row kind-${props.kind} ${
-        props.endSerial ? "" : "point"
-      }`}
+      className="timeline-row"
       style={{
-        "--evt-start": serialToUnix(props.startSerial),
-        "--evt-end": props.endSerial
-          ? serialToUnix(props.endSerial)
-          : serialToUnix(props.startSerial) + 86400,
+        "--evt-start": startSecs,
+        "--evt-end": endSecs,
       }}
     >
       <div className="timeline-inner" ref={barRef}>
@@ -88,14 +88,14 @@ export default function TimelineRow(props: Props): ReactElement | null {
           className={`timeline-label ${position ? `position-${position}` : ""}`}
           ref={labelRef}
         >
-          <b>{props.label}</b>
+          <b>{props.entry.name}</b>
           <br />
           <small>
-            {FMT.format(serialToDate(props.startSerial))}
-            {props.endSerial ? (
+            {FMT.format(props.entry.start)}
+            {props.entry.end.getTime() !== props.entry.start.getTime() ? (
               <>
                 &thinsp;&ndash;&thinsp;
-                {FMT.format(serialToDate(props.endSerial))}
+                {FMT.format(props.entry.end)}
               </>
             ) : null}
           </small>

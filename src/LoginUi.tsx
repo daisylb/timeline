@@ -15,11 +15,7 @@ const OAUTH = new OAuth2({
     "772721993565-c1es60fgnbb0p862cnmio0vfeguecuia.apps.googleusercontent.com",
   authorizationUri: "https://accounts.google.com/o/oauth2/v2/auth",
   redirectUri: `${window.location.protocol}//${window.location.host}/`,
-  scopes: [
-    "https://www.googleapis.com/auth/drive.file",
-    "https://www.googleapis.com/auth/drive.install",
-    "profile",
-  ],
+  scopes: ["https://www.googleapis.com/auth/calendar.readonly", "profile"],
 })
 
 type Props = {}
