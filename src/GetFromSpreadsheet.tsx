@@ -23,6 +23,10 @@ export default function GetFromSpreadsheet(props: Props): ReactElement | null {
       `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`,
       { headers: { Authorization: `Bearer ${token}` } },
     )
+      .then((v) => {
+        if (v.ok) return v
+        else throw v
+      })
       .then((v) => v.json())
       .then((v) => {
         console.log(v)
@@ -38,6 +42,10 @@ export default function GetFromSpreadsheet(props: Props): ReactElement | null {
             )
             .sort((x, y) => x.start.getTime() - y.start.getTime()),
         )
+      })
+      .catch((v) => {
+        if (v instanceof Response && v.status === 401) resetToken()
+        else console.error(v)
       })
   }, [token, resetToken])
 
