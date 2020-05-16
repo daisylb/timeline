@@ -5,7 +5,7 @@ import React, {
   useState,
   useCallback,
 } from "react"
-import { serialToUnix, serialToDate } from "./lib"
+import { serialToUnix, serialToDate, hashStr } from "./lib"
 import { TimelineEntry } from "./types"
 
 declare module "csstype" {
@@ -75,9 +75,14 @@ export default function TimelineRow(props: Props): ReactElement | null {
   const endSecs = useMemo(() => props.entry.end.getTime() + 86_400_000, [
     props.entry.end,
   ])
+  const colorNum = useMemo(() => {
+    const match = /^([^:]+):/.exec(props.entry.name)
+    if (match === null) return null
+    return Math.abs(hashStr(match[1]) % 6)
+  }, [props.entry.name])
   return (
     <div
-      className="timeline-row"
+      className={`timeline-row ${colorNum !== null ? `color-${colorNum}` : ""}`}
       style={{
         "--evt-start": startSecs,
         "--evt-end": endSecs,

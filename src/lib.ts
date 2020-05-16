@@ -12,3 +12,13 @@ export function dayFromStr(dateStr: string) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) throw new SyntaxError(dateStr)
   return new Date(`${dateStr}T00:00:00`)
 }
+
+export function hashStr(s: string) {
+  let hash = 0
+  for (let i = 0; i < s.length; i++) {
+    const chr = s.charCodeAt(i)
+    hash = (hash << 5) - hash + chr
+    hash |= 0 // Convert to 32bit integer
+  }
+  return hash
+}

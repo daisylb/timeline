@@ -1,10 +1,10 @@
 $colors: (
-  "main": #c92a2a,
-  "comms": #0b7285,
-  "program": #e67700,
-  "ticketing": #5c940d,
-  "av": #d6336c,
-  "experience": #5f3dc4,
+  "0": #c92a2a,
+  "1": #0b7285,
+  "2": #e67700,
+  "3": #5c940d,
+  "4": #d6336c,
+  "5": #5f3dc4,
 );
 
 body {
@@ -30,7 +30,7 @@ body {
 
   background-color: #333;
   @each $name, $color in $colors {
-    .kind-#{$name} & {
+    .color-#{$name} & {
       background-color: $color;
     }
   }
