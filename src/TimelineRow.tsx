@@ -72,9 +72,11 @@ export default function TimelineRow(props: Props): ReactElement | null {
   const startSecs = useMemo(() => props.entry.start.getTime(), [
     props.entry.start,
   ])
-  const endSecs = useMemo(() => props.entry.end.getTime() + 86_400_000, [
-    props.entry.end,
-  ])
+  const endSecs = useMemo(() => props.entry.end.getTime(), [props.entry.end])
+  const endDisplay = useMemo(
+    () => new Date(props.entry.end.getTime() - 86_400_000),
+    [props.entry.end],
+  )
   const colorNum = useMemo(() => {
     const match = /^([^:]+):/.exec(props.entry.name)
     if (match === null) return null
@@ -97,10 +99,10 @@ export default function TimelineRow(props: Props): ReactElement | null {
           <br />
           <small>
             {FMT.format(props.entry.start)}
-            {props.entry.end.getTime() !== props.entry.start.getTime() ? (
+            {endDisplay.getTime() !== props.entry.start.getTime() ? (
               <>
                 &thinsp;&ndash;&thinsp;
-                {FMT.format(props.entry.end)}
+                {FMT.format(endDisplay)}
               </>
             ) : null}
           </small>

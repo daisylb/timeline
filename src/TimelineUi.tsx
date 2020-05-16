@@ -23,7 +23,7 @@ export default function TimelineUi(props: Props): ReactElement | null {
       className="timeline"
       style={{
         "--tl-start": tlStart.getTime(),
-        "--tl-end": tlEnd.getTime() + 86_400_000,
+        "--tl-end": tlEnd.getTime(),
       }}
     >
       {props.timeline.map((x, i) => (
