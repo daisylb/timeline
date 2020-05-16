@@ -2836,6 +2836,11 @@ inherits@2.0.3:
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.3.tgz#633c2c83e3da42a502f52466022480f4208261de"
   integrity sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4=
 
+inter-ui@^3.13.1:
+  version "3.13.1"
+  resolved "https://registry.yarnpkg.com/inter-ui/-/inter-ui-3.13.1.tgz#3b3841c1ab425035d0146b38c7ee7a640d3da3d8"
+  integrity sha512-A+gHBm9WXZZmIYHdQci9ZoIrsPkzwYvWqG2+DyrwOuxjZVnRyz3b73ridPUWI/JvZ1nGf2j0VdJ+vxh0/bKBwg==
+
 invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"

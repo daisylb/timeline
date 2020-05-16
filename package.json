@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "client-oauth2": "^4.2.5",
+    "inter-ui": "^3.13.1",
     "parcel-bundler": "^1.12.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
@@ -26,6 +27,11 @@
   "prettier": {
     "semi": false,
     "trailingComma": "all"
+  },
+  "sass": {
+    "includePaths": [
+      "./node_modules"
+    ]
   },
   "scripts": {
     "build": "parcel build src/index.pug",

@@ -1,3 +1,9 @@
+@use "~inter-ui/default" with (
+  $inter-font-display: swap,
+  $inter-font-path: '../node_modules/inter-ui/Inter (web)'
+);
+@include default.all;
+
 $colors: (
   "0": #c92a2a,
   "1": #0b7285,
