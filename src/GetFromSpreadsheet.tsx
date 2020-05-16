@@ -8,8 +8,8 @@ import React, {
 } from "react"
 import { serialToDate, serialToUnix } from "./lib"
 import TimelineRow from "./TimelineRow"
-import { authCtx, TOKEN_STORE_KEY } from "./SigninWrapper"
 import loadScript from "./loadScript"
+import { useAuthToken } from "./auth"
 
 declare module "csstype" {
   interface Properties {
@@ -36,14 +36,14 @@ function parse(data: any[][]): Row[] {
   return out
 }
 
-function loadSheet() {
+function loadSheet(key: string) {
   return new Promise((res) => {
     loadScript("https://apis.google.com/js/api.js").then(() =>
       gapi.load("picker", () => {
         const picker = new google.picker.PickerBuilder()
           .addView(google.picker.ViewId.SPREADSHEETS)
           .setAppId("772721993565")
-          .setOAuthToken(localStorage.getItem(TOKEN_STORE_KEY)!)
+          .setOAuthToken(key)
           .setDeveloperKey("AIzaSyBOoB0xo26xp47UieZWZyoju_h5JwUEUhA")
           .setCallback((evt: any) => {
             if (
@@ -66,7 +66,7 @@ export default function GetFromSpreadsheet(props: Props): ReactElement | null {
   const [value, setValue] = useState<any[][] | undefined>(undefined)
   const [needsAuth, setNeedsAuth] = useState(false)
   const reloader = useRef(() => {})
-  const token = useContext(authCtx)
+  const [token, tokenInvalid] = useAuthToken()
   useEffect(() => {
     if (!token) return
     const doUpdate = async () => {
@@ -137,7 +137,7 @@ export default function GetFromSpreadsheet(props: Props): ReactElement | null {
 
         <button
           onClick={async () => {
-            const v = await loadSheet()
+            const v = await loadSheet(token)
             console.log(v)
             setNeedsAuth(false)
             reloader.current()
