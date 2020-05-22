@@ -22,3 +22,7 @@ export function hashStr(s: string) {
   }
   return hash
 }
+
+export function* range(start: number, stop: number, step: number) {
+  for (let x = start; x < stop; x += step) yield x
+}

@@ -33,7 +33,6 @@ export default function TimelineRow(props: Props): ReactElement | null {
     let label: DOMRectReadOnly | null = null
     let bar: DOMRectReadOnly | null = null
     function resize() {
-      console.log(labelEl, bar, label?.width)
       if (!label || !bar) return
       else if (label.width < bar.width - 20) setPosition(null)
       else if (window.innerWidth - bar.right < label.width + 20)

@@ -29,7 +29,6 @@ export default function GetFromSpreadsheet(props: Props): ReactElement | null {
       })
       .then((v) => v.json())
       .then((v) => {
-        console.log(v)
         setValue(
           (v.items as any[])
             .map(

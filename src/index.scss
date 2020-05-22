@@ -18,6 +18,7 @@ body {
 }
 
 .timeline {
+  position: relative;
   --tl-100pc: calc(100% / (var(--tl-end) - var(--tl-start)));
   .timeline-row {
     position: relative;
@@ -57,4 +58,16 @@ body {
     left: calc(100% + 8px);
     color: #333;
   }
+}
+.week-marker,
+.now-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc((var(--position) - var(--tl-start)) * var(--tl-100pc));
+  border-left: 1px solid #ddd;
+}
+
+.now-marker {
+  border-left-color: red;
 }
