@@ -1,7 +1,7 @@
 import React, { ReactElement, useMemo } from "react"
 import TimelineRow from "./TimelineRow"
 import { TimelineEntry } from "./types"
-import { range } from "./lib"
+import { range, startOfWeek } from "./lib"
 
 type Props = { timeline: TimelineEntry[] }
 
@@ -20,20 +20,8 @@ export default function TimelineUi(props: Props): ReactElement | null {
     [props.timeline],
   )
 
-  const startOfWeek = useMemo(
-    () =>
-      new Date(
-        tlStart.getTime() -
-          (tlStart.getDay() * 86_400_000 || 7 * 86_400_000) +
-          86_400_000,
-      ),
-    [tlStart],
-  )
-  const endOfWeek = useMemo(
-    () => new Date(tlEnd.getTime() + (8 - tlEnd.getDay()) * 86_400_000),
-    [tlEnd],
-  )
-  console.log(tlEnd, endOfWeek)
+  const startOfFirstWeek = useMemo(() => startOfWeek(tlStart), [tlStart])
+  const endOfLastWeek = useMemo(() => startOfWeek(tlEnd, true), [tlEnd])
 
   const categories = useMemo(() => {
     const prefixMap = new Map<string, number>()
@@ -54,13 +42,17 @@ export default function TimelineUi(props: Props): ReactElement | null {
     <div
       className="timeline"
       style={{
-        "--tl-start": startOfWeek.getTime(),
-        "--tl-end": endOfWeek.getTime(),
+        "--tl-start": startOfFirstWeek.getTime(),
+        "--tl-end": endOfLastWeek.getTime(),
       }}
     >
       <NowMarker />
       {Array.from(
-        range(startOfWeek.getTime(), endOfWeek.getTime(), 86_400_000 * 7),
+        range(
+          startOfFirstWeek.getTime(),
+          endOfLastWeek.getTime(),
+          86_400_000 * 7,
+        ),
       ).map((x) => (
         <WeekMarker weekStart={x} />
       ))}

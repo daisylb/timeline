@@ -26,3 +26,15 @@ export function hashStr(s: string) {
 export function* range(start: number, stop: number, step: number) {
   for (let x = start; x < stop; x += step) yield x
 }
+
+export function startOfWeek(d: Date, next?: boolean) {
+  const daysToSubtract = (d.getDay() || 7) - 2
+  const millisecondsToSubtract =
+    (d.getTime() - d.getTimezoneOffset() * 60_000) % 86_400_000
+  return new Date(
+    d.getTime() -
+      daysToSubtract * 86_400_000 -
+      millisecondsToSubtract +
+      (next && (daysToSubtract || millisecondsToSubtract) ? 86_400_000 * 7 : 0),
+  )
+}
