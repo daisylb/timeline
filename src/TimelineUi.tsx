@@ -18,6 +18,22 @@ export default function TimelineUi(props: Props): ReactElement | null {
       ),
     [props.timeline],
   )
+
+  const categories = useMemo(() => {
+    const prefixMap = new Map<string, number>()
+    const output = new Map<TimelineEntry, number>()
+    var counter = 0
+    for (const entry of props.timeline) {
+      const category = /^.*\:/.exec(entry.name)?.[0]
+      if (!category) continue
+      if (!prefixMap.has(category)) {
+        prefixMap.set(category, counter)
+        counter = (counter + 1) % 6
+      }
+      output.set(entry, prefixMap.get(category)!)
+    }
+    return output
+  }, [props.timeline])
   return (
     <div
       className="timeline"
@@ -27,7 +43,11 @@ export default function TimelineUi(props: Props): ReactElement | null {
       }}
     >
       {props.timeline.map((x, i) => (
-        <TimelineRow key={i} entry={x}></TimelineRow>
+        <TimelineRow
+          key={i}
+          entry={x}
+          category={categories.get(x)}
+        ></TimelineRow>
       ))}
     </div>
   )

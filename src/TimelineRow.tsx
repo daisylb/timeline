@@ -17,6 +17,7 @@ declare module "csstype" {
 
 type Props = {
   entry: TimelineEntry
+  category?: number
 }
 
 const FMT = new Intl.DateTimeFormat(undefined, {
@@ -77,14 +78,11 @@ export default function TimelineRow(props: Props): ReactElement | null {
     () => new Date(props.entry.end.getTime() - 86_400_000),
     [props.entry.end],
   )
-  const colorNum = useMemo(() => {
-    const match = /^([^:]+):/.exec(props.entry.name)
-    if (match === null) return null
-    return Math.abs(hashStr(match[1]) % 6)
-  }, [props.entry.name])
   return (
     <div
-      className={`timeline-row ${colorNum !== null ? `color-${colorNum}` : ""}`}
+      className={`timeline-row ${
+        props.category !== undefined ? `color-${props.category}` : ""
+      }`}
       style={{
         "--evt-start": startSecs,
         "--evt-end": endSecs,
