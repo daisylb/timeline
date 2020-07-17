@@ -2,6 +2,7 @@ import React, { ReactElement, useMemo } from "react"
 import TimelineRow from "./TimelineRow"
 import { TimelineEntry } from "./types"
 import { range, startOfWeek } from "./lib"
+import { DateTime } from "luxon"
 
 type Props = { timeline: TimelineEntry[] }
 
@@ -20,8 +21,14 @@ export default function TimelineUi(props: Props): ReactElement | null {
     [props.timeline],
   )
 
-  const startOfFirstWeek = useMemo(() => startOfWeek(tlStart), [tlStart])
-  const endOfLastWeek = useMemo(() => startOfWeek(tlEnd, true), [tlEnd])
+  const startOfFirstWeek = useMemo(
+    () => DateTime.fromJSDate(tlStart).startOf("week").toJSDate(),
+    [tlStart],
+  )
+  const endOfLastWeek = useMemo(
+    () => DateTime.fromJSDate(tlEnd).endOf("week").toJSDate(),
+    [tlEnd],
+  )
 
   const categories = useMemo(() => {
     const prefixMap = new Map<string, number>()
@@ -54,7 +61,7 @@ export default function TimelineUi(props: Props): ReactElement | null {
           86_400_000 * 7,
         ),
       ).map((x) => (
-        <WeekMarker weekStart={x} />
+        <WeekMarker weekStart={DateTime.fromMillis(x)} />
       ))}
       {props.timeline.map((x, i) => (
         <TimelineRow
@@ -67,11 +74,16 @@ export default function TimelineUi(props: Props): ReactElement | null {
   )
 }
 
-type WeekMarkerProps = { weekStart: number }
+type WeekMarkerProps = { weekStart: DateTime }
 
 function WeekMarker(props: WeekMarkerProps): ReactElement | null {
   return (
-    <div className="week-marker" style={{ "--position": props.weekStart }} />
+    <div
+      className="week-marker"
+      style={{ "--position": props.weekStart.toMillis() }}
+    >
+      {props.weekStart.weekNumber}
+    </div>
   )
 }
 

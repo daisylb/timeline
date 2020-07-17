@@ -1,3 +1,5 @@
+import { DateTime } from "luxon"
+
 export function serialToUnix(serial: number) {
   // https://stackoverflow.com/a/6154953/445398
   return (serial - 25569) * 86400
@@ -28,13 +30,15 @@ export function* range(start: number, stop: number, step: number) {
 }
 
 export function startOfWeek(d: Date, next?: boolean) {
-  const daysToSubtract = (d.getDay() || 7) - 2
-  const millisecondsToSubtract =
-    (d.getTime() - d.getTimezoneOffset() * 60_000) % 86_400_000
-  return new Date(
-    d.getTime() -
-      daysToSubtract * 86_400_000 -
-      millisecondsToSubtract +
-      (next && (daysToSubtract || millisecondsToSubtract) ? 86_400_000 * 7 : 0),
-  )
+  const d_ = DateTime.fromJSDate(d)
+  console.log(d_.toLocaleString({ weekday: "short" }))
+  const maybeStart = d_.startOf("week")
+  console.log(d_.toISOWeekDate(), maybeStart.toISOWeekDate())
+  return maybeStart.toJSDate()
+}
+
+export function weekNum(d: Date) {
+  const startOfWeekYear = startOfWeek(new Date(d.getFullYear(), 0, 4))
+  const startOfThisWeek = startOfWeek(d)
+  return
 }

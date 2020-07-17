@@ -20,6 +20,7 @@ body {
 .timeline {
   position: relative;
   --tl-100pc: calc(100% / (var(--tl-end) - var(--tl-start)));
+  padding-top: 20px;
   .timeline-row {
     position: relative;
     height: 55px;
@@ -66,6 +67,8 @@ body {
   bottom: 0;
   left: calc((var(--position) - var(--tl-start)) * var(--tl-100pc));
   border-left: 1px solid #ddd;
+  color: #ddd;
+  padding-left: 0.5ch;
 }
 
 .now-marker {
