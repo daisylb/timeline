@@ -19,33 +19,38 @@ export default function GetFromSpreadsheet(props: Props): ReactElement | null {
   const [value, setValue] = useState<TimelineEntry[] | undefined>(undefined)
   const [token, resetToken] = useAuthToken()
   useEffect(() => {
-    fetch(
-      `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`,
-      { headers: { Authorization: `Bearer ${token}` } },
-    )
-      .then((v) => {
-        if (v.ok) return v
-        else throw v
-      })
-      .then((v) => v.json())
-      .then((v) => {
-        setValue(
-          (v.items as any[])
-            .map(
-              (item: any) =>
-                ({
-                  name: item.summary,
-                  start: dayFromStr(item.start.date),
-                  end: dayFromStr(item.end.date),
-                } as TimelineEntry),
-            )
-            .sort((x, y) => x.start.getTime() - y.start.getTime()),
-        )
-      })
-      .catch((v) => {
-        if (v instanceof Response && v.status === 401) resetToken()
-        else console.error(v)
-      })
+    const update = () => {
+      fetch(
+        `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      )
+        .then((v) => {
+          if (v.ok) return v
+          else throw v
+        })
+        .then((v) => v.json())
+        .then((v) => {
+          setValue(
+            (v.items as any[])
+              .map(
+                (item: any) =>
+                  ({
+                    name: item.summary,
+                    start: dayFromStr(item.start.date),
+                    end: dayFromStr(item.end.date),
+                  } as TimelineEntry),
+              )
+              .sort((x, y) => x.start.getTime() - y.start.getTime()),
+          )
+        })
+        .catch((v) => {
+          if (v instanceof Response && v.status === 401) resetToken()
+          else console.error(v)
+        })
+    }
+    update()
+    const resetter = setInterval(update, 1_000)
+    return () => clearInterval(resetter)
   }, [token, resetToken])
 
   return (
